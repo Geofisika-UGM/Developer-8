@@ -1,7 +1,8 @@
-#Persamaan Wavelet
+#Import Modul
 import math as mt
 import numpy as np
 
+#Persamaan Wavelet Ricker
 def wavelet(f,t):
     pift = mt.pi*f*t
     hasilwavelet = []
@@ -9,17 +10,17 @@ def wavelet(f,t):
     hasilwavelet.append(wav)
     return wav
 
-#Koefisien Seismik Refleksi
-
+#Impedansi akustik
 def impedansi(rho,v):
     rho, v = np.array(rho, dtype=float), np.array(v, dtype=float)
     return rho*v
 
+#Koefisien Seismik Refleksi
 def koefisien_refleksi(rho,v):
     rho, v = np.array(rho, dtype=float), np.array(v, dtype=float)
-    Z   = rho*v       # acoustic impedance
+    Z   = rho*v       # impedansi akustik
     dZ  = (Z[1:] - Z[:-1])
     sZ  = (Z[:-1] + Z[1:])
-    R   = dZ/sZ #reflection coefficients
+    R   = dZ/sZ #Koefisien refleksi
     return R
 
