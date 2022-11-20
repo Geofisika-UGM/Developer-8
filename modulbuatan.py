@@ -1,12 +1,11 @@
 #Import Modul
-import math as mt
 import numpy as np
 
 #Persamaan Wavelet Ricker
 def wavelet(f,t):
-    pift = mt.pi*f*t
+    pift = np.pi*f*t
     hasilwavelet = []
-    wav = (1 - 2*pift**2)*mt.exp(-pift**2)
+    wav = (1 - 2*pift**2)*np.exp(-pift**2)
     hasilwavelet.append(wav)
     return wav
 
