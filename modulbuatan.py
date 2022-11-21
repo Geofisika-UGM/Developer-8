@@ -5,8 +5,6 @@ import numpy as np
 def wavelet(f,t):
     '''Frekuensi (f) adalah banyak gelombang dalam satu detik, satuannya Hertz (Hz)
     waktu (t) satuannya sekon (s) '''
-    assert len(f) == 1, 'Ricker wavelet needs 1 frequency as input'
-    f = f[0]
     pift = np.pi*f*t
     hasilwavelet = []
     wav = (1 - 2*pift**2)*np.exp(-pift**2)
