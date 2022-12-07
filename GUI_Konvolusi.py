@@ -1,107 +1,46 @@
+#Import Modul
 from tkinter import *
-import matplotlib.pyplot as plt
+import tkinter
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, 
 NavigationToolbar2Tk)
+from Core_GUI import kont
 import pandas as pd
-import numpy as np    
+import numpy as np
 
+#Buat Window
 root = Tk()
-root.title("Grafik Trigonometri")
-root.resizable(width=False,height=False)
+root.geometry("420x200")
 
-WIDTH = 1000
-HEIGHT = 600
-canvas = Canvas(root, width=WIDTH,height=HEIGHT, bg='green')
-canvas.pack()
+labelfr = LabelFrame(root,text="result",padx=20,pady=20)
+labelfr.place(x=60,y=380)
 
-data = pd.read_csv("data.csv")
-df = data
+f = Label(root,text = "Masukan Frekuensi")
+l = Label(root,text = "Panjang data")
+dt=  Label(root,text = "interval sampling")
+e1 = Entry(root,width=20)
+e2 = Entry(root,width=20)
+e3 = Entry(root,width=20)
+f.place(x = 20, y = 50)
+e1.place(x = 20, y = 70)
+l.place(x = 150, y = 50)
+e2.place(x = 150, y = 70)
+dt.place(x = 280, y = 50)
+e3.place(x = 280, y = 70)
 
-log_start = 1517               # Depth of logging starts(m) from header
-kb = 15                        # Kelly Bushing elevation(m) from header
+def plot():
+    x1=float(e1.get())
+    x2=float(e2.get())
+    x3=float(e3.get())
+    kont(x1,x2,x3)
 
-gap_int = log_start - kb
-repl_vel = 2632                # this is from VSP data knowledge (m/s)
-log_start_time = 2.0 * gap_int / repl_vel        # 2 for twt
+#Buat Tombol
+root.title('Plotting Konvolusi ')
+plot_button = Button(master = root, 
+                     command = plot,
+                     height = 2, 
+                     width = 10,
+                     text = "Plot")
+plot_button.place(x = 180, y = 100)
 
-dt = 0.01
-dt_iterval = np.nan_to_num(dt) * 0.1524 / 1e6
-t_cum =  np.cumsum(dt_iterval) * 2
-TWT = t_cum + log_start_time
-df['TWT'] = pd.Series(TWT, index=TWT)
-
-Imp = df['AI_Log'].values
-Rc=[]
-for i in range(len(Imp)-1):
-    Rc.append((Imp[i+1]-Imp[i])/(Imp[i]+Imp[i+1]))
-
-# to adjust vector size copy the last element to the tail
-Rc.append(Rc[-1])
-
-df['Rc'] = pd.Series(Rc, index=df.index)
-
-dt = 0.001   #sampleing interval
-t_max = 3.0   # max time to create time vector
-t = np.arange(0, t_max, dt)
-AI_tdom = np.interp(x=t, xp = df.TWT, fp = df.AI_Log)    #resampling
-y = -(data['TWT'] )
-
-
-def Rc(df): #impedansi akustik
-    Imp = df['AI_Log'].values
-    Rc=[]
-    for i in range(len(Imp)-1):
-        Rc.append((Imp[i+1]-Imp[i])/(Imp[i]+Imp[i+1]))
-    # to adjust vector size copy the last element to the tail
-    Rc.append(Rc[-1])
-    # Let's add Rc into dataframe as new column
-    df['Rc'] = pd.Series(Rc, index=df.index)
-    return df,
-    
-def getRicker(f,length,t): #ricker wavelet
-    t = np.arange(-length/2, (length-dt)/2,dt)
-    pift = np.pi*f*t
-    wav = (1 - 2*pift**2)*np.exp(-pift**2)
-    return wav,t
-
-def konvolusi(Rc,w): #Konvolusi 
-    n_conv=len(Rc)-len(w)+1
-    rev_w=w[::-1].copy()
-    result=np.zeros(n_conv)
-    for i_conv in range(n_conv):
-      result[i_conv]=np.dot(Rc[i_conv:i_conv+len(w)],rev_w)
-    return result
-
-
-def grafik():
-    f = float(input("frekuensi:"))
-    length = float(input("panjang data:"))
-    dt = float(input("dt:"))
-    t, w = getRicker(f,length, dt)
-    fig = Figure(figsize = (5, 5),
-                 dpi = 100)
-    
-    plot1 = fig.add_subplot(111)
-    plot1.plot(t, w)
-    canvas = FigureCanvasTkAgg(fig,
-                               master = root)  
-    canvas.draw()
-
-    toolbar = NavigationToolbar2Tk(canvas,
-                                        root)
-    toolbar.update()
-        
-    canvas.get_tk_widget().pack()
-
-def resetgrafik():
-    global ax
-
-    ax.clear()
-    ax.set_title('Grafik Trigonometri')
-    ax.set_xlabel('x (phi)')
-    ax.set_ylabel('y')
-    ax.grid(True)
-
-    canvas.draw()
-  
+root.mainloop()
