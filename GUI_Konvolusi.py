@@ -11,6 +11,7 @@ import numpy as np
 #Buat Window
 root = Tk()
 root.geometry("420x200")
+root.title('Seismometer Sintetik')
 
 labelfr = LabelFrame(root,text="result",padx=20,pady=20)
 labelfr.place(x=60,y=380)
@@ -35,7 +36,6 @@ def plot():
     kont(x1,x2,x3)
 
 #Buat Tombol
-root.title('Plotting Konvolusi ')
 plot_button = Button(master = root, 
                      command = plot,
                      height = 2, 
